@@ -1,6 +1,8 @@
 package impl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import common.InvalidIndexException;
 import common.ListNode;
@@ -14,6 +16,7 @@ import interfaces.ITransformation;
  */
 public class RecursiveListManipulator implements IListManipulator {
 
+    static List<ListNode> circularHead = new ArrayList<>();
     @Override
     public int size(ListNode head) {
         if (head == null) {
@@ -100,6 +103,7 @@ public class RecursiveListManipulator implements IListManipulator {
         if (head1 == null ^ head2 == null){
             return false;
         }
+
         //This statement is needed to avoid a null pointer exception while comparing the elements
         if (head1 == null && head2 == null) {
             return true;
@@ -120,38 +124,119 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public ListNode deepCopy(ListNode head) {
-        // TODO Can't get my head around this one yet
-        return null;
+        if (head == null) {
+            return null;
+        }
+        else {
+            return new ListNode(head.element, deepCopy(head.next));
+        }
+
     }
 
     @Override
     public boolean containsDuplicates(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        if(head == null){
+            return false;
+        }
+        else {
+            ListNode head2 = deepCopy(head.next);
+            if (contains(head2, head.element)) {
+                return true;
+            } else {
+                return containsDuplicates(head.next);
+            }
+        }
+
     }
 
     @Override
     public ListNode append(ListNode head1, ListNode head2) {
-        // TODO Auto-generated method stub
-        return null;
+        //returns the second list if the first one is empty
+        if(head1 == null) {
+            return head2;
+        }
+
+        //returns the first list if the second one is empty
+        if(head2 == null) {
+            return head1;
+        }
+
+        //if the next element in the first list is empty, base case has been reached
+        if(head1.next == null){
+            head1.next = head2;
+            return head1;
+        }
+
+        //else, we are still somewhere in the first list
+        else {
+            head1.next = append(head1.next,head2);
+            return head1;
+        }
+
+
     }
 
     @Override
     public ListNode flatten(ListNode head) {
-        // TODO Auto-generated method stub
-        return null;
+        if (head == null) {
+            return null;
+        }
+
+        if (head.next == null) {
+            return (ListNode) head.element;
+        }
+        else {
+            return append((ListNode) head.element,(ListNode) head.next.element);
+        }
     }
 
     @Override
     public boolean isCircular(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        RecursiveListManipulator.circularHead.add(head);
+
+        if (head == null) {
+            RecursiveListManipulator.circularHead.clear();
+            return false;
+        }
+
+        if (head.next == null) {
+            RecursiveListManipulator.circularHead.clear();
+            return false;
+        }
+        else {
+            if (RecursiveListManipulator.circularHead.get(0) == head.next) {
+                RecursiveListManipulator.circularHead.clear();
+                return true;
+            }
+            else {
+                if (!RecursiveListManipulator.circularHead.contains(head.next)) {
+                    return isCircular(head.next);
+                }
+                else {
+                    RecursiveListManipulator.circularHead.clear();
+                    return false;
+                }
+            }
+        }
     }
 
     @Override
     public boolean containsCycles(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        if(head == null) {
+            return false;
+        }
+
+        if(head.next == null) {
+            return false;
+        }
+        else {
+            if(isCircular(head)){
+                return true;
+            }
+            else {
+                return containsCycles(head.next);
+            }
+        }
     }
 
     @Override
@@ -171,5 +256,7 @@ public class RecursiveListManipulator implements IListManipulator {
         // TODO Auto-generated method stub
         return null;
     }
+
+
 
 }
