@@ -241,8 +241,64 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public ListNode sort(ListNode head, Comparator comparator) {
-        // TODO Auto-generated method stub
+        /*boolean sorted = false;
+        boolean end = false;
+        ListNode temp;
+        ListNode find;
+        if (head == null) {
+            return null;
+        }
+
+        if (head.next == null){
+            return head;
+        }
+        else {
+            find = recurseCompare(head, head, comparator);
+            if(find != null){
+                temp = head;
+                head = find.next;
+                find.next = find.next.next;
+                head.next = temp;
+            }
+            head.next = append(head.next,sort(head.next,comparator));
+            return head;
+        }*/
+
+        if (head == null) {
+            return null;
+        }
+
+        if (head.next == null) {
+            return head;
+        }
+        else {
+            ListNode middle = findMiddle(head);
+        }
         return null;
+    }
+
+    public ListNode findMiddle(ListNode head){
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    public ListNode recurseCompare(ListNode head, ListNode node, Comparator comparator){
+        if(head == null || node == null){
+            return null;
+        }
+
+        if(comparator.compare(head.element, node.next.element)<=0){
+            return recurseCompare(head, node.next, comparator);
+        }
+        else {
+            return node;
+        }
     }
 
     @Override
@@ -255,6 +311,13 @@ public class RecursiveListManipulator implements IListManipulator {
     public Object reduce(ListNode head, IOperator operator, Object initial) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void printList(ListNode head){
+        while (head.next != null) {
+            System.out.println(head.element);
+            head = head.next;
+        }
     }
 
 
